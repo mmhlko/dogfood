@@ -11,21 +11,29 @@ import { Search } from '../search';
 export function App() {
   const [cards, setCards] = useState(dataCard);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [value, setValue] = useState('');
   
+  function handleInputClear(e) { 
+    e.preventDefault();     
+    setValue('');
+    setSearchQuery('');
+    setCards(dataCard)
+       
+  }
 
   function handleRequest() {
+    
     const filterCards = dataCard.filter(item => 
       item.name.includes(searchQuery))
 
     setCards(filterCards)
+
   }
 
   function handleInputChange(dataInput) {
     setSearchQuery(dataInput)
   }
-
-
-
 
  /*  useEffect(() => {
     handleRequest()
@@ -34,14 +42,17 @@ export function App() {
   function handleFormSubmit(evnt) {
     evnt.preventDefault();
     handleRequest();
+    
   }
+
+  
 
 
   return (
     <>
       <Header>
         <Logo />
-        <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange}/>
+        <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} handleInputClear={handleInputClear} value={value} setValue={setValue}/>
       </Header>
       <main className="content container">
         <Sort />
