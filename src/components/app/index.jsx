@@ -1,19 +1,53 @@
-
+import { useEffect, useState } from 'react';
 import { CardList } from '../card-list';
 import { Footer } from '../footer';
 import { Header } from '../header';
 import { Sort } from '../sort';
+import { dataCard } from '../../data';
 import './styles.css';
+import { Logo } from '../logo';
+import { Search } from '../search';
 
 export function App() {
+  const [cards, setCards] = useState(dataCard);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+
+  function handleRequest() {
+    const filterCards = dataCard.filter(item => 
+      item.name.includes(searchQuery))
+
+    setCards(filterCards)
+  }
+
+  function handleInputChange(dataInput) {
+    setSearchQuery(dataInput)
+  }
+
+
+
+
+ /*  useEffect(() => {
+    handleRequest()
+  }, [searchQuery]) */
+
+  function handleFormSubmit(evnt) {
+    evnt.preventDefault();
+    handleRequest();
+  }
+
+
   return (
     <>
-      <Header/>
+      <Header>
+        <Logo />
+        <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange}/>
+      </Header>
       <main className="content container">
-        <Sort/>
-        <CardList/>        
+        <Sort />
+        <CardList goods={cards} />
       </main>
-      <Footer/>
+      <Footer />
     </>
   );
 }

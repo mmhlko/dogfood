@@ -1,13 +1,13 @@
 
-import { dataCard } from '../../data';
+
 import { Card } from '../card';
 
 import './styles.css';
 
-export function CardList() {
+export function CardList({goods}) {
   return (
     <div className='cards content__cards'>
-      {dataCard.map(cardItem => <Card {...cardItem}/>)}
+      {goods.map((cardItem, index) => <Card key={index} {...cardItem}/>)}
       
     </div>
   );
