@@ -3,7 +3,7 @@ import './styles.css';
 
 import {ReactComponent as SearchIcon} from './assets/search-icon.svg';
 import {ReactComponent as SearchClearIcon} from './assets/close-icon.svg';
-import { useState } from 'react';
+
 
 
 export function Search({handleFormSubmit, handleInputChange, handleInputClear, value, setValue}) {

@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './components/app';
-import { Card } from './components/card';
+/* import { Card } from './components/card';
 import { CardList } from './components/card-list';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
 import { Search } from './components/search';
-import { Logo } from './components/logo';
+import { Logo } from './components/logo'; */
 import './style.css';
 
 /*
