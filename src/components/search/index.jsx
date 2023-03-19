@@ -14,7 +14,7 @@ export function Search({handleFormSubmit, handleInputChange, handleInputClear, v
     setValue(e.target.value);
     handleInputChange(e.target.value);
   } } placeholder='поиск'/>
-      <button type='submit' className='search__btn'>
+      <button type='submit' className='search__btn search__magnifier_btn'>
         <SearchIcon />        
       </button>
       <button onClick={handleInputClear} type='clear' className='search__btn search__clear__btn'>

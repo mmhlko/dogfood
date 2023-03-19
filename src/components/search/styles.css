@@ -10,7 +10,7 @@
 	border-radius: 24px;
 	border: 1px solid transparent;
 	outline: none;
-	padding: 13px 60px 13px 20px;
+	padding: 13px 60px 13px 40px;
 	color: #000;
 	font-size: 16px;
 	line-height: 20px;
@@ -32,8 +32,11 @@
 	padding: 0;
 	cursor: pointer;
 	position: absolute;
-	right: 45px;
+	
 	display: flex;
+}
+.search__magnifier_btn{
+	left: 15px;
 }
 
 .search__clear__btn{
