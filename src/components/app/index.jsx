@@ -88,6 +88,8 @@ export function App() {
       .then(([userInfoData, productsData]) => {
         setCurrentUser(userInfoData); //асинхронная операция
         setCards(productsData.products) //асинхронная операция
+
+        console.log(productsData);
         // console.log(state) (покажет старый стейт или null) сработает раньше чем //асинхронная операция выше
       })
       .catch(err => console.log(err))

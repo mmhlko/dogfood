@@ -1,9 +1,8 @@
 
 import './styles.css';
 import classNames from 'classnames';
-import {ReactComponent as LikeIcon} from '../../img/like.svg'
 import { isLiked } from '../../utils/products';
-
+import { ReactComponent as LikeIcon } from "../../img/like.svg";
 
 export function Card({name, price, discount, weight, description, pictures, tags, likes, _id, currentUser, onProductLike,  ...props}) {
   
@@ -29,7 +28,7 @@ export function Card({name, price, discount, weight, description, pictures, tags
       </div>
       <div className="card__sticker card__sticker_type_top-right">
         <button  onClick={handleClickButtonLike} className={classNames('card__favorite', {'card__favorite_is-active': like})}>
-          <LikeIcon />
+          <LikeIcon className='card__favorite-icon'/>
          {/*  <img src={likeIcon} alt="" className='card__favorite-icon'/> */}
         </button>
       </div>
@@ -37,8 +36,8 @@ export function Card({name, price, discount, weight, description, pictures, tags
       <a href="#" className="card__link">
         <img src={pictures} alt={name} className="card__image" />
         <div className="card__desc">
-          <span className={discount !== 0? "card__all-price" : "card__price" }>{price}&nbsp;Р</span>
-          {discount !== 0 && <span className="card__price card__price_type_discount">{discountPrice}&nbsp;Р</span>}
+          <span className={discount !== 0? "card__old-price" : "card__price" }>₽&nbsp;{price}</span>
+          {discount !== 0 && <span className="card__price card__price_type_discount">₽&nbsp;{discountPrice}</span>}
           <span className="card__weight">{weight}</span>
           <h3 className="card__name">{name}</h3>
         </div>    
