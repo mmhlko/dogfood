@@ -114,7 +114,7 @@ export function App() {
       .then(([userInfoData, productsData]) => {
         setCurrentUser(userInfoData); //асинхронная операция
         setCards(productsData.products) //асинхронная операция    
-        setDefaultCards(productsData.products)
+        setDefaultCards(productsData.products.slice())
                
         // console.log(state) (покажет старый стейт или null) сработает раньше чем //асинхронная операция выше
         const favoriteProducts = productsData.products.filter(item => isLiked(item.likes, userInfoData._id))
