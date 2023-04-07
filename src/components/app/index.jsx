@@ -148,9 +148,8 @@ export function App() {
         
         break;
 
-      default:
-        console.log('default');
-        setCards(defaultCards);
+      default:        
+        setCards(defaultCards.slice());
         break;
     }
 
