@@ -27,3 +27,12 @@
 	border-color: #7b8e98;
 	
 }
+.button_type_border {
+	background-color: transparent;
+    border-color: #CFD8DC;
+    color: #1a1a1a;
+}
+.button_type_border:hover {
+	border-color: #7b8e98;
+	
+}

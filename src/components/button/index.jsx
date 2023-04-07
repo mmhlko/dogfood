@@ -2,16 +2,39 @@
 import s from './styles.module.css';
 import classNames from 'classnames';
 
-export function Button({type, children, extraClass, htmlType='button', action}) {
+export function Button({type, children, href, extraClass, htmlType='button', action}) {
+  function handleClick(e) {
+    href && e.preventDefault();
+    action();
+  }
+  
   return (
-    <button 
-      type={htmlType} 
-      className={classNames(s.button, {
-        [s[`button_type_${type}`]]: !!s[`button_type_${type}`], //проверяется если ли такой класс в css, если да, то возвращается true и класс добавляется элементу
-        [extraClass]: !!extraClass
-      })}
-      onClick={action}
-
-    >{children}</button>
-  )
+    href
+        ? <a
+            href={href || '#'}
+            className={classNames(
+                s.button,
+                {
+                    [s[`button_type_${type}`]]: !!s[`button_type_${type}`],
+                    [extraClass]: !!extraClass
+                }
+            )}
+            onClick={handleClick}
+        >
+            {children}
+        </a>
+        : <button
+            type={htmlType}
+            className={classNames(
+                s.button,
+                {
+                    [s[`button_type_${type}`]]: !!s[`button_type_${type}`],
+                    [extraClass]: !!extraClass
+                }
+            )}
+            onClick={action}
+        >
+            {children}
+        </button>
+)
 }

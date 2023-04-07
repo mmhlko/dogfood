@@ -48,14 +48,27 @@ class Api {
             .then(this.#onResponce)
     }
 
-    changeLikeProductStatus(productID, isLiked) {
-        return fetch(`${this.#baseUrl}/products/likes/${productID}`, {
+    changeLikeProductStatus(productId, isLiked) {
+        return fetch(`${this.#baseUrl}/products/likes/${productId}`, {
             method: isLiked? 'DELETE' : 'PUT',
             headers: this.#headers
         })
         
             .then(this.#onResponce)
     }
+
+    getProductById(productId) {
+        return fetch(`${this.#baseUrl}/products/${productId}`, {
+            headers: this.#headers
+        }
+        )
+            .then(this.#onResponce)
+    }
+
+    getProductInfo(productId) { //нужен чтобы запрос пользователя был вместе с продуктам, чтоб рендеринг был после определения пользователя
+        return Promise.all([this.getProductById(productId), this.getUserInfo()])
+    }
+
 }
 
 const api = new Api({
