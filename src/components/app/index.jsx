@@ -12,7 +12,7 @@ import api from '../../utils/api'
 import { useDebounce } from '../../hooks/useDebounce';
 import { isLiked } from '../../utils/products';
 import FaqPage from '../../pages/FAQ';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
 //страницы
 
 import { CatalogPage } from '../../pages/catalog page';
@@ -21,9 +21,14 @@ import NotFoundPage from '../../pages/not found page';
 import { UserContext } from '../../contexts/current-user-context';
 import { CardsContext } from '../../contexts/cards-context';
 import { ThemeContext, themes } from '../../contexts/theme-context';
-import { light } from '@mui/material/styles/createPalette';
 import { FavoritePage } from '../../pages/Favorite page';
 import { TABS, TABS_ID } from '../../utils/constants';
+import Form from '../form';
+import Modal from '../modal';
+import RegisterForm from '../register-form';
+import LoginForm from '../login-form';
+import ResetPasswordForm from '../reset-password-form';
+
 
 
 //import s from './styles.module.css';
@@ -41,6 +46,25 @@ export function App() {
   const [theme, setTheme] = useState(themes.light);
   const debounceSearchQuery = useDebounce(searchQuery, 300)
 
+  //routing + modal
+  const location = useLocation();
+  const backgroundLocation = location.state?.backgroundLocation;
+  const initialPath = location.state?.initialPath;
+
+  const [modalFormStatus, setModalFormStatus] = useState(false);
+
+  const onCloseModalForm = () => {
+    setModalFormStatus(false)
+  }
+
+  const navigate = useNavigate()
+
+//закрытие модального окна ведет на страницу открытия модального окна или на главную
+  const onCloseRoutingModal = () => {
+    navigate(initialPath || '/', {navigate: true}) //вторым полем удаляем из истории переход обратно
+  }
+
+  const [contacts, setContacts] = useState([])
 
   function handleInputClear(e) {
     e.preventDefault();
@@ -158,6 +182,42 @@ export function App() {
   function toggleTheme() {
     theme === themes.dark? setTheme(themes.light) : setTheme(themes.dark)
   }
+  function addContact(dataInfo) {
+    setContacts([...contacts, dataInfo])
+  }
+//callback для отправки формы логина и регистрации
+  const handleSubmitForm = (dataForm) => {
+    console.log(dataForm);        
+}
+
+
+/* //Переход на страницу  авторизации
+const handleClickNavigateLogin = (e) => {
+  e.preventDefault();
+  //так же как для <Link to='/register' replace state={{backgroundLocation: {...location, state: null}, initialPath}>
+  navigate('/login', {replace: true, state: {backgroundLocation: {...location, state: null}, initialPath}})
+}
+ */
+
+// в navigate отправляем только ссылку для перехода, без подложки
+const handleClickNavigate = (to) => {  
+  return  (e) => {
+      e.preventDefault();
+      //так же как для <Link to='/register' replace state={{backgroundLocation: {...location, state: null}, initialPath}>
+       navigate(to)
+          
+    }  
+}
+
+//добавляем подложку под модалку backgroundLocation и удаляем переход из истории
+const handleClickNavigateModal = (to) => {  
+  return  (e) => {
+      e.preventDefault();
+      //так же как для <Link to='/register' replace state={{backgroundLocation: {...location, state: null}, initialPath}>
+       navigate(to, {replace: true, state: {backgroundLocation: {...location, state: null}, initialPath}})
+          
+    }  
+}
   
 
   return (
@@ -173,30 +233,74 @@ export function App() {
         setCurrentSort
         }}>
     <UserContext.Provider value={{currentUser, onUpdatedUser: handleUpdateUser}}>
+
       <Header>
 
-        <Logo href='/' />
-        <Routes>
-          <Route path='/' element={<Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} handleInputClear={handleInputClear} value={value} setValue={setValue} />}/>
+        
+        <Routes location={backgroundLocation && {...backgroundLocation, pathname: initialPath} || location}>
+          <Route path='/' element={
+            <>      <Logo href='/' />          
+              <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} handleInputClear={handleInputClear} value={value} setValue={setValue} />
+            </>
+          }/>
+          <Route path='/login' element={
+            <>      <Logo href='/' />          
+            </>
+          }/>
+          <Route path='/register' element={
+            <>      <Logo href='/' />          
+            </>
+          }/>
+          <Route path='/reset-password' element={
+            <>      <Logo href='/' />          
+            </>
+          }/>
           <Route path='*' element={null} />
         </Routes>
-        
+
         
       </Header>
       <main className="content container" style={{backgroundColor: theme.background, color: theme.color}}>
-        <Routes>
+        <Routes location={backgroundLocation && {...backgroundLocation, pathname: initialPath} || location}>
           {/* <Route path='/' element={<span>Главная</span>}/> */}
           <Route path='/' element={<CatalogPage isLoading={isLoading}/>} />
           <Route path='/favorites' element={<FavoritePage isLoading={isLoading} />} />
           <Route path='/faq' element={<FaqPage />}/>
           <Route path='/product/:productId' element={<ProductPage />}/> {/* :productID это переменная, значение задается в компоненте card <Link to={`/product/${_id}`} className="card__link">*/}
+          <Route path='/register' element={            
+              <RegisterForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+          }/>
+          <Route path='/login' element={
+              <LoginForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+          }/>
+          <Route path='/reset-password' element={
+              <ResetPasswordForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+          }/>
           <Route path='*' element={<NotFoundPage />} />
-        </Routes>
-        
+        </Routes>     
         
         
       </main>
       <Footer />
+      {backgroundLocation && <Routes>         
+          <Route path='/register' element={
+            <Modal isOpen={true} onClose={onCloseRoutingModal} >
+              <RegisterForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
+            </Modal>
+          }/>
+          <Route path='/login' element={
+            <Modal isOpen={true} onClose={onCloseRoutingModal} >
+              <LoginForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
+            </Modal>
+          }/>
+          <Route path='/reset-password' element={
+            <Modal isOpen={true} onClose={onCloseRoutingModal} >
+              <ResetPasswordForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
+            </Modal>
+          }/>
+          <Route path='*' element={null} />
+        </Routes>
+      }
     </UserContext.Provider>
     </CardsContext.Provider>
     </ThemeContext.Provider>

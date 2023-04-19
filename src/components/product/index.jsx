@@ -7,11 +7,14 @@ import truck from "../../img/truck.svg";
 import quality from "../../img/quality.svg";
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/current-user-context';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { ContentHeader } from '../content-header';
+import Rating from '../rating';
+import FormReview from '../form-review';
 
 function Product({name, description, pictures, price, discount, likes = [], _id, weight, reviews, onProductLike}) {
     const {currentUser} = useContext(UserContext)
+    const [currentRating, setCurrentRating] = useState(5)
     const navigate = useNavigate(); //хук для навигации по сайту
     const discountPrice = calcDiscountPrice(price, discount)
     const like = currentUser && isLiked(likes, currentUser._id)
@@ -32,6 +35,7 @@ function Product({name, description, pictures, price, discount, likes = [], _id,
             </div> */}
             <ContentHeader className={s.header} textButton={'назад'} title={name}>
                 <p className={s.articul}>Артикул: <b>664646</b></p>
+                <Rating currentRating={currentRating} setCurrentRating={setCurrentRating}/>
             </ContentHeader>
 
             <div className={s.product}>
@@ -116,6 +120,7 @@ function Product({name, description, pictures, price, discount, likes = [], _id,
                     </div>
                 </div>
             </div>
+            <FormReview title={`Отзыв о товаре ${name}`}/>
         </>
      );
 }
