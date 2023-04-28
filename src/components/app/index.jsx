@@ -28,7 +28,8 @@ import Modal from '../modal';
 import RegisterForm from '../register-form';
 import LoginForm from '../login-form';
 import ResetPasswordForm from '../reset-password-form';
-
+import { useDispatch } from 'react-redux';
+import { fetchProducts } from '../../storage/products/products-slice';
 
 
 //import s from './styles.module.css';
@@ -45,6 +46,11 @@ export function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [theme, setTheme] = useState(themes.light);
   const debounceSearchQuery = useDebounce(searchQuery, 300)
+
+  //redux
+  const dispatch = useDispatch();
+
+
 
   //routing + modal
   const location = useLocation();
@@ -131,6 +137,11 @@ export function App() {
     handleRequest()
   }, [debounceSearchQuery])
 
+  //redux
+
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [])
 
   useEffect(() => {
     setIsLoading(true)

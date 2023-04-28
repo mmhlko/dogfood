@@ -12,6 +12,10 @@ import { ThemeContext } from '../../contexts/theme-context';
 import { CardsContext } from '../../contexts/cards-context';
 import { Link, useLocation } from 'react-router-dom';
 import { ReactComponent as FavoritesIcon } from './img/favorites.svg';
+import { ReactComponent as LogoutIcon } from './img/logout.svg';
+import { ReactComponent as CartIcon } from './img/cart.svg';
+import { ReactComponent as UserIcon } from './img/user.svg';
+import { ReactComponent as ProfileIcon } from './img/profile.svg';
 
 export function Header({children}) {
   const { toggleTheme } = useContext(ThemeContext)
@@ -32,9 +36,27 @@ export function Header({children}) {
             <FavoritesIcon />
             {favorites.length > 0 && <span className={s.iconBubble}>{favorites.length}</span>}
           </Link>
+          <Link to={{pathname: '/cart'}} className={s.favoritesLink}>
+            <CartIcon />
+            {favorites.length > 0 && <span className={s.iconBubble}>{favorites.length}</span>}
+          </Link>
+          
+          
           {/* Записываем в стейт первоначальную страницу с которой нажата кнопка в initialPath, 
           в backgroundLocation предыдущая страница, replace для удаления перехода из истории на странице*/}
-          <Link replace to={'/login'} state={{backgroundLocation: location, initialPath: location.pathname}}>Войти</Link>
+          <Link replace to={'/login'} className={s.iconsMenuItem} state={{backgroundLocation: location, initialPath: location.pathname}}>
+            <UserIcon />
+            Войти
+          </Link>
+
+          <Link  to={'/profile'} className={s.iconsMenuItem} >
+            <ProfileIcon />
+            Максим
+          </Link>
+          <Link  to={'/'} className={s.iconsMenuItem} >
+            <LogoutIcon />
+            Выйти
+          </Link>
         </div>
 
 
