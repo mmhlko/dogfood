@@ -43,7 +43,7 @@ function LoginForm({onSubmit, onNavigate, modal}) {
                 id='email'
                 type='text'
                 placeholder='email'
-                autocomplete="none"
+                autoComplete="none"
                 
             />
             {errors?.email && <p className='errorMessage'>{errors.email.message}</p>}

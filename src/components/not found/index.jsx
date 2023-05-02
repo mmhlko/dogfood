@@ -1,6 +1,7 @@
 import { ReactComponent as NotFoundIcon} from './images/notfound-icon.svg'; 
 import { Button } from '../button';
 import s from './styles.module.css';
+import { Link } from 'react-router-dom';
 
 export function NotFound({children, title, buttonText = 'На главную', buttonAction}) {
   return (
@@ -10,7 +11,7 @@ export function NotFound({children, title, buttonText = 'На главную', b
       {children && children}
       {buttonAction
         ? <Button type='border' href='#' action={buttonAction}>{buttonText}</Button>  
-        : <Button type='border' href='/'>{buttonText}</Button>
+        : <Link to='/'><Button type='border'>{buttonText}</Button></Link>
       }
     </div>
 

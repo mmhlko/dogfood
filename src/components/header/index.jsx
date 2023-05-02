@@ -16,16 +16,25 @@ import { ReactComponent as LogoutIcon } from './img/logout.svg';
 import { ReactComponent as CartIcon } from './img/cart.svg';
 import { ReactComponent as UserIcon } from './img/user.svg';
 import { ReactComponent as ProfileIcon } from './img/profile.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../storage/user/user-slice';
 
 export function Header({children}) {
-  const { toggleTheme } = useContext(ThemeContext)
-  const { favorites } = useContext(CardsContext)
-  const {currentUser, onUpdatedUser} = useContext(UserContext) // currentUser context
-  const handleClickButtonEdit = () => {
-    onUpdatedUser({name: 'Макс', about: 'Пользователь'})
-  }
 
   const location = useLocation();
+  const dispatch = useDispatch();
+  const favorites = useSelector(state => state.products.favoriteProducts) //стало
+  const currentUser = useSelector(state => state.user.data)
+
+  const { toggleTheme } = useContext(ThemeContext)
+  //было const { favorites } = useContext(CardsContext)  
+  //const {currentUser, onUpdatedUser} = useContext(UserContext) // currentUser context  
+  const handleClickButtonEdit = () => {
+    /* onUpdatedUser({name: 'Макс', about: 'Пользователь'}) */
+  }
+  
+ 
+  
 
   return (
     <header className={s.header}>
@@ -34,44 +43,35 @@ export function Header({children}) {
         <div className={s.iconsMenu}>
           <Link to={{pathname: '/favorites'}} className={s.favoritesLink}>
             <FavoritesIcon />
-            {favorites.length > 0 && <span className={s.iconBubble}>{favorites.length}</span>}
+            {favorites?.length > 0 && <span className={s.iconBubble}>{favorites.length}</span>}
           </Link>
           <Link to={{pathname: '/cart'}} className={s.favoritesLink}>
             <CartIcon />
-            {favorites.length > 0 && <span className={s.iconBubble}>{favorites.length}</span>}
+            {favorites?.length > 0 && <span className={s.iconBubble}>{favorites.length + 2}</span>}
           </Link>
           
           
           {/* Записываем в стейт первоначальную страницу с которой нажата кнопка в initialPath, 
           в backgroundLocation предыдущая страница, replace для удаления перехода из истории на странице*/}
-          <Link replace to={'/login'} className={s.iconsMenuItem} state={{backgroundLocation: location, initialPath: location.pathname}}>
-            <UserIcon />
-            Войти
-          </Link>
-
-          <Link  to={'/profile'} className={s.iconsMenuItem} >
-            <ProfileIcon />
-            Максим
-          </Link>
-          <Link  to={'/'} className={s.iconsMenuItem} >
-            <LogoutIcon />
-            Выйти
-          </Link>
+          {currentUser
+          ?
+          <>
+            <Link  to={'/profile'} className={s.iconsMenuItem} >
+              <ProfileIcon />
+              {currentUser.name}
+            </Link>
+            <Link  to={'/'} className={s.iconsMenuItem} onClick={() => dispatch(logout())}>
+              <LogoutIcon />
+              Выйти
+            </Link>
+          </>
+ 
+          : <Link replace to={'/login'} className={s.iconsMenuItem} state={{backgroundLocation: location, initialPath: location.pathname}}>
+              <UserIcon />
+              Войти
+            </Link>
+          }          
         </div>
-
-
-       {/*  {currentUser && 
-        <div className={s.header__userInfo}>
-          <span>{currentUser.name} : {currentUser.about}</span>
-          <span>{currentUser.email}</span>
-          <Button action={handleClickButtonEdit}>Изменить</Button>
-          <label className="wraper" htmlFor="something">
-          <div className="switch-wrap">
-            <input type="checkbox" id="something" onChange={toggleTheme} />
-            <div className="switch"></div>
-          </div>
-        </label>  
-        </div>} */}
         
       </div>
 

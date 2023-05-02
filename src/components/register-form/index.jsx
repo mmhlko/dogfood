@@ -39,7 +39,18 @@ function RegisterForm({onSubmit, onNavigate, modal}) {
         }
     })
 
-    
+    const groupRegister = register('group', {
+        required: {
+            value: true,
+            message: "Обязательное поле"
+        },
+        pattern: {
+            value: /^group-[0-9]{1,3}$/,
+            message: "Номер группы в формате group-номер" 
+        }
+    })
+
+        
     return ( 
         <>
         <Form title={'Регистрация'} handleForm={handleSubmit(onSubmit)}>
@@ -50,6 +61,13 @@ function RegisterForm({onSubmit, onNavigate, modal}) {
                 placeholder='email'
             />
             {errors?.email && <p className='errorMessage'>{errors.email.message}</p>}
+            <FormInput 
+                {...groupRegister}
+                id='group'
+                type='text'
+                placeholder='номер группы'
+            />
+            {errors?.group && <p className='errorMessage'>{errors.group.message}</p>}
             <FormInput 
                 {...passwordRegister}
                 id='password'

@@ -6,20 +6,24 @@ import { ReactComponent as LikeIcon } from "../../img/like.svg";
 import truck from "../../img/truck.svg";
 import quality from "../../img/quality.svg";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/current-user-context';
-import { useContext, useState } from 'react';
+//import { UserContext } from '../../contexts/current-user-context';
+import { useState } from 'react';
 import { ContentHeader } from '../content-header';
 import Rating from '../rating';
 import FormReview from '../form-review';
+import { useSelector } from 'react-redux';
+import Review from '../review';
 
-function Product({name, description, pictures, price, discount, likes = [], _id, weight, reviews, onProductLike}) {
-    const {currentUser} = useContext(UserContext)
+function Product({onProductLike}) {
+    //const {currentUser} = useContext(UserContext)
+    const {name, description, pictures, price, discount, likes, _id, reviews} = useSelector(state => state.productItem.data)
+    const currentUser = useSelector(state => state.user.data)
     const [currentRating, setCurrentRating] = useState(5)
     const navigate = useNavigate(); //хук для навигации по сайту
     const discountPrice = calcDiscountPrice(price, discount)
     const like = currentUser && isLiked(likes, currentUser._id)
     
-
+    
     function handleLikeClick() {
         onProductLike({likes, _id})
     }
@@ -28,11 +32,6 @@ function Product({name, description, pictures, price, discount, likes = [], _id,
     }
     return ( 
         <>
-{/*             <div className={s.header}>                
-                <Button href='#' type='border' className='button-back' action={() => navigate(-1)}>Назад</Button>
-                <h1 className={s.producttitle}>{name}</h1>
-                <p className={s.articul}>Артикул: <b>664646</b></p>
-            </div> */}
             <ContentHeader className={s.header} textButton={'назад'} title={name}>
                 <p className={s.articul}>Артикул: <b>664646</b></p>
                 <Rating currentRating={currentRating} setCurrentRating={setCurrentRating}/>
@@ -120,7 +119,10 @@ function Product({name, description, pictures, price, discount, likes = [], _id,
                     </div>
                 </div>
             </div>
-            <FormReview title={`Отзыв о товаре ${name}`}/>
+            
+            {reviews.length !==0 && reviews.map((reviewData, index) => <Review key={index} {...reviewData}/>)}
+            
+            <FormReview title={`Отзыв о товаре ${name}`} productId={_id}/>
         </>
      );
 }

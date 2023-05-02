@@ -1,57 +1,67 @@
-import { useState, useEffect } from 'react';
-import { CardList } from '../card-list';
-import { Footer } from '../footer';
-import { Header } from '../header';
-import { Sort } from '../sort';
-import { dataCard } from '../../data';
-import '../../utils/api.js'
-import { Logo } from '../logo';
-import { Search } from '../search';
-import { Button } from '../button';
-import api from '../../utils/api'
-import { useDebounce } from '../../hooks/useDebounce';
-import { isLiked } from '../../utils/products';
-import FaqPage from '../../pages/FAQ';
-import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
-//страницы
-
+//Компоненты и страницы
+import MainPage from '../../pages/main-page';
 import { CatalogPage } from '../../pages/catalog page';
 import { ProductPage } from '../../pages/product page';
-import NotFoundPage from '../../pages/not found page';
-import { UserContext } from '../../contexts/current-user-context';
-import { CardsContext } from '../../contexts/cards-context';
-import { ThemeContext, themes } from '../../contexts/theme-context';
 import { FavoritePage } from '../../pages/Favorite page';
-import { TABS, TABS_ID } from '../../utils/constants';
-import Form from '../form';
+import NotFoundPage from '../../pages/not found page';
+import FaqPage from '../../pages/FAQ';
 import Modal from '../modal';
 import RegisterForm from '../register-form';
 import LoginForm from '../login-form';
+import ProtectedRoute from '../protected-route';
 import ResetPasswordForm from '../reset-password-form';
-import { useDispatch } from 'react-redux';
-import { fetchProducts } from '../../storage/products/products-slice';
+import { Logo } from '../logo';
+import { Search } from '../search';
+import { Footer } from '../footer';
+import { Header } from '../header';
 
+//hooks
+import { useState, useEffect } from 'react';
+import { useDebounce } from '../../hooks/useDebounce';
+import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
 
-//import s from './styles.module.css';
+//utils
+import { getLocalData } from '../../utils/local-storage';
+import api from '../../utils/api'
+import { TABS, TABS_ID } from '../../utils/constants';
+import { isLiked } from '../../utils/products';
+
+//контекст
+import { UserContext } from '../../contexts/current-user-context';
+import { ThemeContext, themes } from '../../contexts/theme-context';
+
+//redux
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchChangeLikeProduct, fetchProducts, sortedProducts } from '../../storage/products/products-slice';
+import { fetchCheckToken, fetchLoginUser, fetchRegisterUser, fetchUser } from '../../storage/user/user-slice';
+import DnDPage from '../../pages/dnd-page';
 
 
 export function App() {
-  const [cards, setCards] = useState([]); //стейт для карточек для рендеринга
+  // redux replace // const [cards, setCards] = useState([]); //стейт для карточек для рендеринга
+  
   const [defaultCards, setDefaultCards] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  // redux replace //const [favorites, setFavorites] = useState([]);
   const [currentSort, setCurrentSort] = useState(TABS_ID.DEFAULT);
-  const [currentUser, setCurrentUser] = useState(null) //стейт для авторизованного пользователя
+  // redux replace // const [currentUser, setCurrentUser] = useState(null) //стейт для авторизованного пользователя
   const [searchQuery, setSearchQuery] = useState(''); //стейт для строки поиска
   const [value, setValue] = useState('');//стейт значение в инпуте строки
-  const [isLoading, setIsLoading] = useState(false)
+  // redux replace // const [isLoading, setIsLoading] = useState(false)
   const [theme, setTheme] = useState(themes.light);
   const debounceSearchQuery = useDebounce(searchQuery, 300)
 
-  //redux
+  //redux replace
   const dispatch = useDispatch();
-
-
-
+  const currentUser = useSelector(state => state.user.data)
+  const cards = useSelector(state => state.products.data)
+  // [header] const favorites = useSelector(state => state.products.favoriteProducts)
+  //const currentSort = useSelector(state => state.)
+  
+  const isLoadingUser = useSelector(state => state.user.fetchUserRequest)
+  const isLoadingProducts = useSelector(state => state.products.loading)
+  const isLoading = /* isLoadingUser && */ isLoadingProducts; //сохраняем старую переменную которая теерь состоит из сочетания двух
+  
+  
   //routing + modal
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
@@ -76,7 +86,7 @@ export function App() {
     e.preventDefault();
     setValue('');
     setSearchQuery('');
-    setCards(dataCard)
+    //setCards(dataCard)
 
   }
 
@@ -89,7 +99,7 @@ export function App() {
 
     api.search(debounceSearchQuery)
       .then((dataSearch) => {
-        setCards(dataSearch)
+        //setCards(dataSearch)
 
       })
 
@@ -101,7 +111,7 @@ export function App() {
 
   function handleFormSubmit(evnt) {
     evnt.preventDefault();
-    console.log('submit');
+    
     handleRequest();
 
   }
@@ -109,29 +119,11 @@ export function App() {
   function handleUpdateUser(dataUserUpdate) {
     api.setUserInfo(dataUserUpdate)
       .then((updatedUser) => {
-        setCurrentUser(updatedUser)
+        //setCurrentUser(updatedUser)
       })
   }
 
-  function handleProductLike(product) {
-    //true or false => проверка есть ли лайк данного пользователя в объекте лайков в продукте
-    const like = isLiked(product.likes, currentUser._id)
-    return api.changeLikeProductStatus(product._id, like)
-      .then((updatedCard) => {
-          const newProducts = cards.map(cardState => { //карточка в стейте cards
-           return cardState._id === updatedCard._id? updatedCard : cardState
-          })
-          setCards(newProducts)
-
-          if (!like) { //если лайка не было, то при нажатии на лайк карточка добвится в массив избранных карточек
-            setFavorites(prevState => [...prevState, updatedCard])
-          } else { //если лайк стоял, лайк убирается и возвращается отфильтрованный массив в стейт избранных карточек
-            setFavorites(prevState => prevState.filter(card => card._id !== updatedCard._id))
-          }
-
-          return updatedCard
-      })
-  }  
+ 
 
   useEffect(() => {
     handleRequest()
@@ -139,56 +131,20 @@ export function App() {
 
   //redux
 
-  useEffect(() => {
-    dispatch(fetchProducts())
-  }, [])
+  const token = getLocalData('token')
+  
 
-  useEffect(() => {
-    setIsLoading(true)
-    api.getAllInfo() //нужен чтобы запрос пользователя был вместе с продуктам, чтоб рендеринг был после определения пользователя
-      .then(([userInfoData, productsData]) => {
-        setCurrentUser(userInfoData); //асинхронная операция
-        setCards(productsData.products) //асинхронная операция    
-        setDefaultCards(productsData.products.slice())
-               
-        // console.log(state) (покажет старый стейт или null) сработает раньше чем //асинхронная операция выше
-        const favoriteProducts = productsData.products.filter(item => isLiked(item.likes, userInfoData._id))
-        setFavorites(favoriteProducts)
-      })      
-      .catch(err => console.log(err))
-      .finally(() => setIsLoading(false))
+  useEffect(() => { //когда 2 диспатча идут друг за другом, она асинхронные и возвращаются данные кто вперед, если сделать через then то они выполняются по очереди
+    dispatch(fetchCheckToken(token)) //диспатч возвращает промис, поэтому можно применить then
+    .then(() => {
+      if (token) {        
+        dispatch(fetchProducts())
+      }
+     
+    })   
+    
+  }, [dispatch, token])
 
-    /* api.getProductList()
-      .then(data => setCards(data.products))
-      .catch(err => console.log(err))
-
-    api.getUserInfo()
-      .then(user => setCurrentUser(user))
-      .catch(err => console.log(err)) */
-
-  }, [])
-
-  function sortedData(currentSort) {
-    switch (currentSort) {
-      case (TABS_ID.CHEAP):
-        setCards(cards.sort((a, b) => a.price - b.price));
-        
-        break;
-      case (TABS_ID.LOW):
-        setCards(cards.sort((a, b) => b.price - a.price));
-        
-        break;
-      case (TABS_ID.DISCOUNT):
-        setCards(cards.sort((a, b) => b.discount - a.discount));
-        
-        break;
-
-      default:        
-        setCards(defaultCards.slice());
-        break;
-    }
-
-  }
 
   function toggleTheme() {
     theme === themes.dark? setTheme(themes.light) : setTheme(themes.dark)
@@ -209,6 +165,21 @@ const handleClickNavigateLogin = (e) => {
   navigate('/login', {replace: true, state: {backgroundLocation: {...location, state: null}, initialPath}})
 }
  */
+
+
+
+
+const cbSubmitFormRegister = (dataForm) => {
+  //console.log('cbSubmitFormLoginRegister', dataForm);
+  dispatch(fetchRegisterUser(dataForm))
+}
+const cbSubmitFormLogin = (dataForm) => {
+  //console.log('cbSubmitFormLogin', dataForm);
+  dispatch(fetchLoginUser(dataForm))
+}
+const cbSubmitFormResetPassword = (dataForm) => {
+  //console.log('cbSubmitFormResetPassword', dataForm);
+}
 
 // в navigate отправляем только ссылку для перехода, без подложки
 const handleClickNavigate = (to) => {  
@@ -233,39 +204,21 @@ const handleClickNavigateModal = (to) => {
 
   return (
     <ThemeContext.Provider value={{theme, toggleTheme}}>
-    <CardsContext.Provider 
-      value={{
-        cards, 
-        favorites, 
-        handleLike: handleProductLike, 
-        isLoading,
-        onChangeSort: sortedData,
-        currentSort,
-        setCurrentSort
-        }}>
-    <UserContext.Provider value={{currentUser, onUpdatedUser: handleUpdateUser}}>
-
-      <Header>
-
-        
+      <Header>        
         <Routes location={backgroundLocation && {...backgroundLocation, pathname: initialPath} || location}>
-          <Route path='/' element={
-            <>      <Logo href='/' />          
+          <Route path='/' element={<><Logo href='/' /></>}/>
+          <Route path='/catalog' element={
+            <>
+              <Logo href='/' />          
               <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} handleInputClear={handleInputClear} value={value} setValue={setValue} />
             </>
           }/>
-          <Route path='/login' element={
-            <>      <Logo href='/' />          
-            </>
-          }/>
-          <Route path='/register' element={
-            <>      <Logo href='/' />          
-            </>
-          }/>
-          <Route path='/reset-password' element={
-            <>      <Logo href='/' />          
-            </>
-          }/>
+          <Route path='/login' element={<><Logo href='/' /></>}/>
+          <Route path='/register' element={<><Logo href='/' /></>}/>
+          <Route path='/reset-password' element={<><Logo href='/' /></>}/>
+          <Route path='/product/:productId' element={<><Logo href='/' /></>} />
+          <Route path='/dnd' element={<><Logo href='/' /></>} />
+
           <Route path='*' element={null} />
         </Routes>
 
@@ -274,46 +227,57 @@ const handleClickNavigateModal = (to) => {
       <main className="content container" style={{backgroundColor: theme.background, color: theme.color}}>
         <Routes location={backgroundLocation && {...backgroundLocation, pathname: initialPath} || location}>
           {/* <Route path='/' element={<span>Главная</span>}/> */}
-          <Route path='/' element={<CatalogPage isLoading={isLoading}/>} />
-          <Route path='/favorites' element={<FavoritePage isLoading={isLoading} />} />
+          <Route path='/' element={<MainPage/>} />
+          <Route path='/catalog' element={<ProtectedRoute><CatalogPage/></ProtectedRoute>} />
+          <Route path='/favorites' element={<ProtectedRoute><FavoritePage /></ProtectedRoute>} />
           <Route path='/faq' element={<FaqPage />}/>
-          <Route path='/product/:productId' element={<ProductPage />}/> {/* :productID это переменная, значение задается в компоненте card <Link to={`/product/${_id}`} className="card__link">*/}
+          <Route path='/product/:productId' element={<ProtectedRoute><ProductPage /></ProtectedRoute>}/> {/* :productID это переменная, значение задается в компоненте card <Link to={`/product/${_id}`} className="card__link">*/}
           <Route path='/register' element={            
-              <RegisterForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+              <ProtectedRoute onlyUnAuth><RegisterForm onSubmit={cbSubmitFormRegister} onNavigate={handleClickNavigate}/></ProtectedRoute>
           }/>
           <Route path='/login' element={
-              <LoginForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+              <ProtectedRoute onlyUnAuth><LoginForm onSubmit={cbSubmitFormLogin} onNavigate={handleClickNavigate}/></ProtectedRoute>
           }/>
           <Route path='/reset-password' element={
-              <ResetPasswordForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigate}/>
+              <ProtectedRoute onlyUnAuth><ResetPasswordForm onSubmit={cbSubmitFormResetPassword} onNavigate={handleClickNavigate}/></ProtectedRoute>
           }/>
+          <Route path='/dnd' element={<ProtectedRoute><DnDPage /></ProtectedRoute>} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>     
         
         
       </main>
       <Footer />
-      {backgroundLocation && <Routes>         
-          <Route path='/register' element={
+      {backgroundLocation && <Routes>     
+        <Route path='/register' element={
+            <ProtectedRoute onlyUnAuth>
             <Modal isOpen={true} onClose={onCloseRoutingModal} >
-              <RegisterForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
+              <RegisterForm onSubmit={cbSubmitFormRegister} onNavigate={handleClickNavigateModal} modal={true}/>
             </Modal>
+            </ProtectedRoute>
           }/>
-          <Route path='/login' element={
-            <Modal isOpen={true} onClose={onCloseRoutingModal} >
-              <LoginForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
-            </Modal>
-          }/>
-          <Route path='/reset-password' element={
-            <Modal isOpen={true} onClose={onCloseRoutingModal} >
-              <ResetPasswordForm onSubmit={handleSubmitForm} onNavigate={handleClickNavigateModal} modal={true}/>
-            </Modal>
-          }/>
+                   
+          
+            <Route path='/login' element={
+              <ProtectedRoute onlyUnAuth>
+                <Modal isOpen={true} onClose={onCloseRoutingModal} >
+                  <LoginForm onSubmit={cbSubmitFormLogin} onNavigate={handleClickNavigateModal} modal={true}/>
+                </Modal>
+              </ProtectedRoute>
+            }/>
+          
+          
+            <Route path='/reset-password' element={
+              <ProtectedRoute onlyUnAuth>
+                <Modal isOpen={true} onClose={onCloseRoutingModal} >
+                  <ResetPasswordForm onSubmit={cbSubmitFormResetPassword} onNavigate={handleClickNavigateModal} modal={true}/>
+                </Modal>
+              </ProtectedRoute>
+            }/>
+          <Route path='/dnd' element={<ProtectedRoute><Modal isOpen={true} onClose={onCloseRoutingModal} ><DnDPage /></Modal></ProtectedRoute>} />
           <Route path='*' element={null} />
-        </Routes>
+      </Routes>
       }
-    </UserContext.Provider>
-    </CardsContext.Provider>
     </ThemeContext.Provider>
   );
 }

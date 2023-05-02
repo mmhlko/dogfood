@@ -6,20 +6,30 @@ import { ReactComponent as LikeIcon } from "../../img/like.svg";
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { CardsContext } from '../../contexts/cards-context';
-import { UserContext } from '../../contexts/current-user-context';
+//import { UserContext } from '../../contexts/current-user-context';
 import ContentLoader from "react-content-loader"
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchChangeLikeProduct } from '../../storage/products/products-slice';
 
 export function Card({ name, price, discount, weight, description, pictures, tags, likes, _id, ...props }) {
-  const { currentUser } = useContext(UserContext);
-  const { handleLike, isLoading } = useContext(CardsContext);
+  //const { currentUser } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector(state => state.user.data)
+  const isLoading = useSelector(state => state.products.loading)
+  //const { isLoading } = useContext(CardsContext);
   const discountPrice = calcDiscountPrice(price, discount);
   const like = currentUser && isLiked(likes, currentUser._id);
 
+  
 
+  //вытащили из App
+  function handleProductLike(product) {
+    return dispatch(fetchChangeLikeProduct(product))  
+  } 
 
 
   function handleClickButtonLike() { //ожидание нажатия кнопки лайка
-    handleLike({ likes, _id }) //в функцию попадет объект product, а мы его сразу деструктурировали на два интересующих свойства
+    handleProductLike({ likes, _id }) //в функцию попадет объект product, а мы его сразу деструктурировали на два интересующих свойства
   }
 
   return (

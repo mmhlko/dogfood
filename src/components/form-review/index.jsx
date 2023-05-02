@@ -7,14 +7,18 @@ import FormInput from '../form-input';
 import FormButton from '../form-button';
 import Rating from '../rating';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchCreateReview } from '../../storage/product-item/product-item-slice';
 
 
-function FormReview({title = 'Отзыв о товаре', productId, setProduct}) {
-
+function FormReview({title = 'Отзыв о товаре', productId}) {
+    const dispatch = useDispatch();
     const {register, handleSubmit, formState: {errors}, reset} = useForm({mode: 'onBlur'});
-    const [rating, setRating] = useState(5)
+    const [rating, setRating] = useState(5);
+
     const handleSubmitForm = (data) => {
         console.log('handleSubmitForm', {...data, rating});
+        dispatch(fetchCreateReview({productId, data}))
         reset(); //очищает форму после submit
         setRating(5)
     }
