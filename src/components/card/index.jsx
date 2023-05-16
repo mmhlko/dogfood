@@ -10,10 +10,14 @@ import { CardsContext } from '../../contexts/cards-context';
 import ContentLoader from "react-content-loader"
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChangeLikeProduct } from '../../storage/products/products-slice';
+import { ProductPrice } from '../product-price';
+import { addProductCart } from '../../storage/cart/cart-slice';
 
 export function Card({ name, price, discount, weight, description, pictures, tags, likes, _id, ...props }) {
   //const { currentUser } = useContext(UserContext);
   const dispatch = useDispatch();
+  const addDataCart = {_id, name, pictures, discount, price, weight}
+
   const currentUser = useSelector(state => state.user.data)
   const isLoading = useSelector(state => state.products.loading)
   //const { isLoading } = useContext(CardsContext);
@@ -31,6 +35,12 @@ export function Card({ name, price, discount, weight, description, pictures, tag
   function handleClickButtonLike() { //ожидание нажатия кнопки лайка
     handleProductLike({ likes, _id }) //в функцию попадет объект product, а мы его сразу деструктурировали на два интересующих свойства
   }
+
+  function handleCartClick(e) {
+    e.preventDefault();
+    dispatch(addProductCart(addDataCart))
+
+} 
 
   return (
     <>
@@ -65,13 +75,12 @@ export function Card({ name, price, discount, weight, description, pictures, tag
           <Link to={`/product/${_id}`} className="card__link">
             <img src={pictures} alt={name} className="card__image" />
             <div className="card__desc">
-              <span className={discount !== 0 ? "card__old-price" : "card__price"}>₽&nbsp;{price}</span>
-              {discount !== 0 && <span className="card__price card__price_type_discount">₽&nbsp;{discountPrice}</span>}
+              <ProductPrice price={price} discount={discount} type='small'/>              
               <span className="card__weight">{weight}</span>
               <h3 className="card__name">{name}</h3>
             </div>
           </Link>
-          <a href="#" className="card__cart btn btn_type_primary">В корзину</a>
+          <a href="#" className="card__cart btn btn_type_primary" onClick={handleCartClick}>В корзину</a>
 
         </article>
       }
