@@ -25,6 +25,7 @@ export function Header({children}) {
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.products.favoriteProducts) //стало
   const currentUser = useSelector(state => state.user.data)
+  const cartCount = useSelector(state => state.cart.totalProductsCount)
 
   const { toggleTheme } = useContext(ThemeContext)
   //было const { favorites } = useContext(CardsContext)  
@@ -47,7 +48,7 @@ export function Header({children}) {
           </Link>
           <Link to={{pathname: '/cart'}} className={s.favoritesLink}>
             <CartIcon />
-            {favorites?.length > 0 && <span className={s.iconBubble}>{favorites.length + 2}</span>}
+            {cartCount > 0 && <span className={s.iconBubble}>{cartCount}</span>}
           </Link>
           
           

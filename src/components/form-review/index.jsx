@@ -28,8 +28,7 @@ function FormReview({title = 'Отзыв о товаре', productId}) {
             value: true,
             message: "Обязательное поле"
         }
-    })
-
+    })   
     
     return ( 
         <>
@@ -42,11 +41,13 @@ function FormReview({title = 'Отзыв о товаре', productId}) {
                 typeTag='textarea'
                 id='text'
                 placeholder='Напишите текст отзыва'
+                
             />
             {errors?.text && <p className='errorMessage'>{errors.text.message}</p>}
                         
             <FormButton type='submit' color='primary'>Отправить отзыв</FormButton>
         </Form>
+        
 
         </>
         

@@ -1,6 +1,6 @@
 import { getLocalData } from "./local-storage";
 
-class Api {
+export class Api {
     #baseUrl;
     #headers;
     
@@ -135,7 +135,7 @@ class Api {
 }
 
 const api = new Api({
-    baseUrl: 'https://api.react-learning.ru',
+    baseUrl: 'https://api.react-learning.ru', //далее добавляется эндпоинт
     headers: {
         'content-type': 'application/json',
         //authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDEwN2UwOWFhMzk3MTIxODM4ZjI4ZWMiLCJncm91cCI6Imdyb3VwLTExIiwiaWF0IjoxNjc4ODAyNDQ4LCJleHAiOjE3MTAzMzg0NDh9.Ij9HtsP55BsI2ukV4SgqqSWxsEjpcJz53Avty8LEgKE',

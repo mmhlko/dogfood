@@ -35,6 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchChangeLikeProduct, fetchProducts, sortedProducts } from '../../storage/products/products-slice';
 import { fetchCheckToken, fetchLoginUser, fetchRegisterUser, fetchUser } from '../../storage/user/user-slice';
 import DnDPage from '../../pages/dnd-page';
+import CartPage from '../../pages/cart-page';
 
 
 export function App() {
@@ -218,7 +219,7 @@ const handleClickNavigateModal = (to) => {
           <Route path='/reset-password' element={<><Logo href='/' /></>}/>
           <Route path='/product/:productId' element={<><Logo href='/' /></>} />
           <Route path='/dnd' element={<><Logo href='/' /></>} />
-
+          <Route path='/user' element={<><Logo href='/' /></>} />
           <Route path='*' element={null} />
         </Routes>
 
@@ -232,6 +233,8 @@ const handleClickNavigateModal = (to) => {
           <Route path='/favorites' element={<ProtectedRoute><FavoritePage /></ProtectedRoute>} />
           <Route path='/faq' element={<FaqPage />}/>
           <Route path='/product/:productId' element={<ProtectedRoute><ProductPage /></ProtectedRoute>}/> {/* :productID это переменная, значение задается в компоненте card <Link to={`/product/${_id}`} className="card__link">*/}
+          <Route path='/cart' element={<ProtectedRoute><CartPage /></ProtectedRoute>}/>
+          <Route path='/user' element={<></>} />
           <Route path='/register' element={            
               <ProtectedRoute onlyUnAuth><RegisterForm onSubmit={cbSubmitFormRegister} onNavigate={handleClickNavigate}/></ProtectedRoute>
           }/>

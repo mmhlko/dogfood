@@ -45,9 +45,9 @@ function Rating({isEditable = false, currentRating, setCurrentRating}) {
     useEffect(() => constructRating(currentRating), [currentRating])
 
     return ( 
-    <>
+    <div className='rating__container'>
         {ratingArray.map((star, i) => <span key={i}>{star}</span>)}
-    </>
+    </div>
      );
 }
 

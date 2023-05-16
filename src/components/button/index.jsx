@@ -5,7 +5,7 @@ import classNames from 'classnames';
 export function Button({type, children, href, extraClass, htmlType='button', action}) {
   function handleClick(e) {
     href && e.preventDefault();
-    action();
+    action && action();
   }
   
   return (

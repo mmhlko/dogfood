@@ -24,7 +24,7 @@ export const ProductPage = () => {
     //Заменили useApi на Redux
     const dispatch = useDispatch();
     const {data: product, loading: isLoading, error: errorState} = useSelector(state => state.productItem)
-
+    
     //Удаляем все стейты, т.к. мы используем свой кастомный хук useApi, в котором уже все эти данные присутсвуют
     //const {data: product, loading: isLoading, error: errorState, setData: setProduct} = useApi(handleGetProduct)
     //Получаем данные из хука вместо стейтов, которые ниже
@@ -73,7 +73,7 @@ export const ProductPage = () => {
         <>
             {isLoading
             ? <Spiner /> 
-            : !errorState && <Product onProductLike={handleProductLike} />}
+            : !errorState && <Product onProductLike={handleProductLike} reviews={product.reviews}/>}
 
             {!isLoading && errorState && <NotFound title='товар не найден' />}
         </>

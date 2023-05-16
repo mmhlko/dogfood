@@ -11,18 +11,21 @@ import { useState } from 'react';
 import { ContentHeader } from '../content-header';
 import Rating from '../rating';
 import FormReview from '../form-review';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
 import Review from '../review';
+import { addProductCart } from '../../storage/cart/cart-slice';
+import { ProductPrice } from '../product-price';
 
 function Product({onProductLike}) {
     //const {currentUser} = useContext(UserContext)
-    const {name, description, pictures, price, discount, likes, _id, reviews} = useSelector(state => state.productItem.data)
+    const {name, description, pictures, price, weight, discount, likes, _id, reviews} = useSelector(state => state.productItem.data)
+    const addDataCart = {_id, name, pictures, discount, price, weight}
     const currentUser = useSelector(state => state.user.data)
     const [currentRating, setCurrentRating] = useState(5)
     const navigate = useNavigate(); //хук для навигации по сайту
     const discountPrice = calcDiscountPrice(price, discount)
     const like = currentUser && isLiked(likes, currentUser._id)
-    
+    const dispatch = useDispatch();
     
     function handleLikeClick() {
         onProductLike({likes, _id})
@@ -30,6 +33,11 @@ function Product({onProductLike}) {
     function createMarkupDescription() {
         return { __html: description };
     }
+    function handleCartClick() {
+        dispatch(addProductCart(addDataCart))
+
+    }
+    
     return ( 
         <>
             <ContentHeader className={s.header} textButton={'назад'} title={name}>
@@ -42,23 +50,14 @@ function Product({onProductLike}) {
                     <img src={pictures} alt={name} />
                 </div>
                 <div className={s.desc}>
-                    {discount !== 0 ? (
-                            <>
-                                <span className={s.oldPrice}>{price}&nbsp;₽</span>
-                                <span className={classNames(s.price, s.price_discount)}>
-                                    {discountPrice}&nbsp;₽
-                                </span>
-                            </>
-                        ) : (
-                            <span className={s.price}>{price}&nbsp;₽</span>
-                        )}
+                    <ProductPrice price={price} discount={discount} type='small'/> 
                     <div className={s.btnWrap}>
                         <div className={s.left}>
                             <button className={s.minus}>-</button>
                             <span className={s.num}>0</span>
                             <button className={s.plus}>+</button>
                         </div>
-                        <Button href='#' type='primary'>В корзину</Button>
+                        <Button action={handleCartClick} href='#' type='primary'>В корзину</Button>
                     </div>
                     <button className={classNames(s.favorite, {[s.favoriteActive]: like})} onClick={handleLikeClick}>
                         <LikeIcon />
@@ -120,8 +119,8 @@ function Product({onProductLike}) {
                 </div>
             </div>
             
-            {reviews.length !==0 && reviews.map((reviewData, index) => <Review key={index} {...reviewData}/>)}
-            
+            {reviews?.length !==0 && reviews?.map((reviewData, index) => <Review key={index} {...reviewData}/>)}
+           
             <FormReview title={`Отзыв о товаре ${name}`} productId={_id}/>
         </>
      );

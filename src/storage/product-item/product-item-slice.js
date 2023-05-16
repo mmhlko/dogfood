@@ -3,8 +3,8 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 const initialState = {
     data: [],
-    favoriteProducts: [], //добавляем новое поле в стейт, т.к. в запросе currentUser уже придет (см. const { user } = await getState())
-    total: 0,
+    //favoriteProducts: [], //добавляем новое поле в стейт, т.к. в запросе currentUser уже придет (см. const { user } = await getState())
+    //total: 0,
     loading: false,
     error: null
 }
