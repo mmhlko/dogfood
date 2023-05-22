@@ -3,11 +3,19 @@ import cn from 'classnames';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
-function ButtonCount({ amount = 0, handleIncrement, handleDecrement, handleCountChange }) {
-  const [value, setValue] = useState(0);
+interface IButtonCountProps {
+  amount: number, 
+  handleIncrement: () => void, 
+  handleDecrement: () => void, 
+  handleCountChange: (count:number) => void,
+}
+
+function ButtonCount({ amount = 0, handleIncrement, handleDecrement, handleCountChange }: IButtonCountProps) {
+  const [value, setValue] = useState<number>(0);
   const MIN_COUNT_IN_CART = 1;
 
-  function handleBlurInput(e) {
+  function handleBlurInput(e: React.FocusEvent<HTMLInputElement>) {
+    //указываем тип для элемента события напрямую через React.
     const countInCart = Number(e.target.value);
     if (countInCart > 0) {
       handleCountChange(countInCart)
@@ -16,7 +24,7 @@ function ButtonCount({ amount = 0, handleIncrement, handleDecrement, handleCount
     }
   }
 
-  function handleChangeInput(e) {
+  function handleChangeInput(e: React.FocusEvent<HTMLInputElement>) {
     const countInCart = Number(e.target.value);
     if (countInCart > 0) {
       setValue(countInCart)

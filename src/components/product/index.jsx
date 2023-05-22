@@ -1,7 +1,7 @@
 import s from './styles.module.css';
 import classNames from 'classnames';
 import { Button } from '../button';
-import { calcDiscountPrice, isLiked } from '../../utils/products';
+import { calcDiscountPrice, checkProductInCart, isLiked } from '../../utils/products';
 import { ReactComponent as LikeIcon } from "../../img/like.svg";
 import truck from "../../img/truck.svg";
 import quality from "../../img/quality.svg";
@@ -13,8 +13,10 @@ import Rating from '../rating';
 import FormReview from '../form-review';
 import { useSelector, useDispatch} from 'react-redux';
 import Review from '../review';
-import { addProductCart } from '../../storage/cart/cart-slice';
+import { addProductCart, changeProductQuantityCart, decrementQuantityCart, incrementQuantityCart } from '../../storage/cart/cart-slice';
 import { ProductPrice } from '../product-price';
+import ButtonCount from '../button-count';
+import { useAppSelector } from '../../storage/hook';
 
 function Product({onProductLike}) {
     //const {currentUser} = useContext(UserContext)
@@ -26,6 +28,10 @@ function Product({onProductLike}) {
     const discountPrice = calcDiscountPrice(price, discount)
     const like = currentUser && isLiked(likes, currentUser._id)
     const dispatch = useDispatch();
+
+    //проверка наличия товара в корзине
+    const cartProducts = useAppSelector(state => state.cart.data);  //корзина
+    const productInCartInfo = checkProductInCart(cartProducts, _id);    //проверяемый товар
     
     function handleLikeClick() {
         onProductLike({likes, _id})
@@ -53,11 +59,14 @@ function Product({onProductLike}) {
                     <ProductPrice price={price} discount={discount} type='small'/> 
                     <div className={s.btnWrap}>
                         <div className={s.left}>
-                            <button className={s.minus}>-</button>
-                            <span className={s.num}>0</span>
-                            <button className={s.plus}>+</button>
+                            <ButtonCount 
+                                amount={productInCartInfo.quantity}
+                                handleIncrement={() => { dispatch(incrementQuantityCart(addDataCart)) }}
+                                handleDecrement={() => { dispatch(decrementQuantityCart(addDataCart)) }}
+                                handleCountChange={(newQuantity) => { dispatch(changeProductQuantityCart({ ...addDataCart, quantity: newQuantity })) }}
+                            />
                         </div>
-                        <Button action={handleCartClick} href='#' type='primary'>В корзину</Button>
+                        <Button action={handleCartClick} href='#' type='primary'>{!productInCartInfo.quantity && productInCartInfo.quantity === 0 ? 'В корзину' : 'Добавлено'}</Button>
                     </div>
                     <button className={classNames(s.favorite, {[s.favoriteActive]: like})} onClick={handleLikeClick}>
                         <LikeIcon />

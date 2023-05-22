@@ -137,12 +137,12 @@ export function App() {
 
   useEffect(() => { //когда 2 диспатча идут друг за другом, она асинхронные и возвращаются данные кто вперед, если сделать через then то они выполняются по очереди
     dispatch(fetchCheckToken(token)) //диспатч возвращает промис, поэтому можно применить then
-    .then(() => {
-      if (token) {        
-        dispatch(fetchProducts())
-      }
-     
-    })   
+      .then(() => {
+        if (token) {        
+          dispatch(fetchProducts())
+        }
+       
+      })   
     
   }, [dispatch, token])
 

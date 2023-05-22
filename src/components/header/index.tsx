@@ -1,15 +1,9 @@
-
-
-//import './styles.css';
-
 import s from './styles.module.css';
 import './styles.css';
 import className from 'classnames';
 import { Button } from '../button';
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/current-user-context';
+import { FC, FunctionComponent, ReactNode, useContext } from 'react';
 import { ThemeContext } from '../../contexts/theme-context';
-import { CardsContext } from '../../contexts/cards-context';
 import { Link, useLocation } from 'react-router-dom';
 import { ReactComponent as FavoritesIcon } from './img/favorites.svg';
 import { ReactComponent as LogoutIcon } from './img/logout.svg';
@@ -18,14 +12,22 @@ import { ReactComponent as UserIcon } from './img/user.svg';
 import { ReactComponent as ProfileIcon } from './img/profile.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../storage/user/user-slice';
+import { useAppSelector } from '../../storage/hook'; //замена  useSelector
 
-export function Header({children}) {
+interface IHeaderProp {
+  children: ReactNode // тип для входящих в компонент дочерних компонентов
+}
+
+//FC<T> - компонент функции 
+//type FC<P = {}> = FunctionComponent<P> добавляет свой пропс в FunctionComponent
+export const Header: FC<IHeaderProp> = ({children}) => {
+//export function Header({children}: IHeaderProp) {
 
   const location = useLocation();
   const dispatch = useDispatch();
-  const favorites = useSelector(state => state.products.favoriteProducts) //стало
-  const currentUser = useSelector(state => state.user.data)
-  const cartCount = useSelector(state => state.cart.totalProductsCount)
+  const favorites = useAppSelector(state => state.products.favoriteProducts) //стало
+  const currentUser = useAppSelector(state => state.user.data)
+  const cartCount = useAppSelector(state => state.cart.totalProductsCount)
 
   const { toggleTheme } = useContext(ThemeContext)
   //было const { favorites } = useContext(CardsContext)  
@@ -33,8 +35,6 @@ export function Header({children}) {
   const handleClickButtonEdit = () => {
     /* onUpdatedUser({name: 'Макс', about: 'Пользователь'}) */
   }
-  
- 
   
 
   return (
@@ -55,6 +55,7 @@ export function Header({children}) {
           {/* Записываем в стейт первоначальную страницу с которой нажата кнопка в initialPath, 
           в backgroundLocation предыдущая страница, replace для удаления перехода из истории на странице*/}
           {currentUser
+          
           ?
           <>
             <Link  to={'/profile'} className={s.iconsMenuItem} >

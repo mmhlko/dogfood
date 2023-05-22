@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import './index.css';
 import { App } from './components/app';
 
@@ -12,15 +12,20 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+//определение роутера в зависимости от того где запускается сборка
+const Router = process.env.REACT_APP_GH_PAGES !== 'true' ? BrowserRouter : HashRouter;
+//process.env переменная окружения - переменная с которой запускается приложение
+console.log(Router);
+
 root.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </PersistGate>    
+      <Router>
+        <App />
+      </Router>
+    </PersistGate>
   </Provider>
-  
+
 );
 
 // If you want to start measuring performance in your app, pass a function
