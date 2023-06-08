@@ -1,0 +1,19 @@
+:root {
+    --input-gap: 12px;
+  }
+
+.formRow {
+    display: flex;
+    column-gap: var(--input-gap);
+    width: 100%;
+}
+
+.formRowHalf {
+    width: calc(50% - var(--input-gap)/2);
+}
+
+.formLabel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}

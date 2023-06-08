@@ -5,15 +5,12 @@ import { getLocalData } from "./local-storage";
 type ApiConfig = {
     baseUrl: string;
     headers: any;
-
 }
-
-
 
 type ServerResponse<T> = {
     created_at?: Date,
     updated_at?: Date,
-    __v: number
+    __v?: number
 } & T; //& T добавляет к типу данные из Т
 
 export type TUserResponseDto = ServerResponse<TUser> //получаем тип юзера вместе с полями от сервера (created_at: Date, updated_at: Date, __v)
@@ -35,6 +32,8 @@ export type TAuthResponseDto = {
 export  type UserBodyDto = {
     name: string,
     about: string,
+    avatar?: string,
+    email?:string
 }
 //типа данных при авторизации
 export  type UserAuthBodyDto = {
@@ -43,26 +42,22 @@ export  type UserAuthBodyDto = {
 }
 //типа данных при регистрации
 export  type UserRegisterBodyDto = {
-    gpoup: string,    
-} & UserAuthBodyDto & Partial<UserAuthBodyDto> //необязательные полня из UserAuthBodyDto
+    group: string,    
+} & UserAuthBodyDto & Partial<UserAuthBodyDto> //необязательные поля из UserAuthBodyDto
 
 //типа данных при отправке отзыва
 export  type UserReviewBodyDto = {
     rating: number,
     text: string,
-    city: string
+    city?: string
 }
-
-
-
-
 
 export class Api {
     #baseUrl;
     #headers;
     
 
-    constructor({baseUrl, headers}:any) {
+    constructor({baseUrl, headers}:ApiConfig) {
         this.#baseUrl = baseUrl;
         this.#headers = headers;
     }
@@ -90,7 +85,7 @@ export class Api {
         return fetch(`${this.#baseUrl}/products/search?query=${searchQuery}`, {
             headers: { ...this.#headers, authorization: `Bearer ${getLocalData('token')}` },        
         })
-            .then(this.#onResponce<TProductsResponseDto[]>)
+            .then(this.#onResponce<TProductResponseDto[]>)
     }
 
     setUserInfo({name, about}:UserBodyDto) { //изменение пользователя
@@ -117,7 +112,7 @@ export class Api {
             headers: { ...this.#headers, authorization: `Bearer ${getLocalData('token')}` },        
         }
         )
-            .then(this.#onResponce<TUserResponseDto>)
+            .then(this.#onResponce<TProductResponseDto>)
     }
 
     createReviewProduct(productId: string, reviewData: UserReviewBodyDto) { //изменение пользователя

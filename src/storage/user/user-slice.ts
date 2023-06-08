@@ -2,12 +2,12 @@ import {createSlice, createAsyncThunk, SerializedError} from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { setLocalData } from '../../utils/local-storage';
 import { createAppAsyncThunk } from '../hook';
-import { TAuthResponseDto, TUserResponseDto, UserAuthBodyDto, UserRegisterBodyDto } from '../../utils/api';
+import { TAuthResponseDto, TUserResponseDto, UserAuthBodyDto, UserBodyDto, UserRegisterBodyDto } from '../../utils/api';
 // import api from '../../utils/api'; payloadCreator => extra: api
 
-type TUserState  = {
+export type TUserState  = {
     isAuthChecked: boolean,
-    data: any,
+    data: TUserResponseDto | null,
 
     fetchRegisterUserRequest: boolean,
     fetchRegisterUserError: SerializedError | null | unknown,
@@ -17,6 +17,9 @@ type TUserState  = {
 
     fetchCheckTokenRequest: boolean,
     fetchCheckTokenError: SerializedError | null | unknown,
+
+    fetchEditUserInfoRequest: boolean,
+    fetchEditUserInfoError: SerializedError | null | unknown,
 
 }
 
@@ -32,6 +35,9 @@ const initialState: TUserState = {
 
     fetchCheckTokenRequest: false,
     fetchCheckTokenError: null,
+
+    fetchEditUserInfoRequest: false,
+    fetchEditUserInfoError: null,
 
 }
 
@@ -62,6 +68,7 @@ export const fetchLoginUser = createAppAsyncThunk<TUserResponseDto, UserAuthBody
     /* arg2 */ async function payloadCreator(dataUser, {fulfillWithValue,rejectWithValue, extra: api}) {
         try {
             const data = await api.authorize(dataUser);
+                        
             if (data.token) {                
                setLocalData('token', data.token)
                return fulfillWithValue(data.data) //action.payload = {products: [], total: 0}
@@ -87,6 +94,24 @@ export const fetchCheckToken = createAppAsyncThunk<TUserResponseDto, string>(
             return rejectWithValue(error) //возвращается при ошибке
         }
         finally {dispatch(authCheck())}
+    }
+)
+
+export const fetchEditUserInfo = createAppAsyncThunk<TUserResponseDto, UserBodyDto>(
+    `${sliceName}/fetchEditUserInfo`,
+    async function payloadCreator(dataUser, { fulfillWithValue, rejectWithValue, extra: api}) {
+        try {
+            const data = await api.setUserInfo(dataUser);
+            if(data.name) {
+                return fulfillWithValue(data)
+            } else {
+                return rejectWithValue(data)
+            }
+             
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+        
     }
 )
 
@@ -146,6 +171,16 @@ const userSlice = createSlice({
                 state.fetchCheckTokenRequest = false;
             })
             .addCase(fetchCheckToken.rejected, (state, action) => {
+                state.fetchCheckTokenError = action.payload;
+                state.fetchCheckTokenRequest = false;
+            })
+
+            //fetchEditUserInfo
+            .addCase(fetchEditUserInfo.fulfilled, (state, action) => { //payload экшена формируется в payload-creator асинхр функции, а сам экшен в функции fetchProducts
+                state.data = action.payload; //то что приходит по запросу продуктов, массив с товарами
+                state.fetchCheckTokenRequest = false;
+            })
+            .addCase(fetchEditUserInfo.rejected, (state, action) => {
                 state.fetchCheckTokenError = action.payload;
                 state.fetchCheckTokenRequest = false;
             })

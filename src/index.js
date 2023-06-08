@@ -15,7 +15,10 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 //определение роутера в зависимости от того где запускается сборка
 const Router = process.env.REACT_APP_GH_PAGES !== 'true' ? BrowserRouter : HashRouter;
 //process.env переменная окружения - переменная с которой запускается приложение
-console.log(Router);
+//HashRouter нужен для навигации при публикации на гитхабе, т.к. там недоступен BrowserRouter
+//для этого в package.json добавили строчку в скриптах "deploy-gh": "cross-env REACT_APP_GH_PAGES=true npm run build && gh-pages -d build"
+//так же "homepage": "./", чтоб навигация была относительно папки где расположен index.html а не корень репа
+
 
 root.render(
   <Provider store={store}>

@@ -8,7 +8,6 @@ export type TUser = {
 
 }
 
-
 export type TProduct = {
     discount: number,
     stock: number,
@@ -23,8 +22,7 @@ export type TProduct = {
     author: TUser,
     price: number,
     wight: string,
-    description: string,
-    
+    description: string,   
     
 }
 
@@ -35,4 +33,15 @@ export type TReview ={
     author: TUser,
     product: string,
     city?: string
+}
+
+export type TProductInCart = {
+    discount: number,
+    pictures: string,
+    _id: string,
+    name: string,
+    price: number,
+    wight: string,
+    quantity: number;
+    isGift?: boolean;
 }

@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-import { TProduct } from '../types';
+import { TProduct, TProductInCart } from '../types';
 
 export interface IcheckProductInCart {
     quantity: number, 
     exist: boolean
 }
 
-export interface ICartProduct extends TProduct {
+export interface ICartProduct extends TProductInCart {
     quantity: number
 }
 

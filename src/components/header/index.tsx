@@ -12,7 +12,7 @@ import { ReactComponent as UserIcon } from './img/user.svg';
 import { ReactComponent as ProfileIcon } from './img/profile.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../storage/user/user-slice';
-import { useAppSelector } from '../../storage/hook'; //замена  useSelector
+import { useAppDispatch, useAppSelector } from '../../storage/hook'; //замена  useSelector
 
 interface IHeaderProp {
   children: ReactNode // тип для входящих в компонент дочерних компонентов
@@ -24,8 +24,8 @@ export const Header: FC<IHeaderProp> = ({children}) => {
 //export function Header({children}: IHeaderProp) {
 
   const location = useLocation();
-  const dispatch = useDispatch();
-  const favorites = useAppSelector(state => state.products.favoriteProducts) //стало
+  const dispatch = useAppDispatch();
+  const favorites = useAppSelector(state => state.products.favoriteProducts) || {length: 0}//стало
   const currentUser = useAppSelector(state => state.user.data)
   const cartCount = useAppSelector(state => state.cart.totalProductsCount)
 

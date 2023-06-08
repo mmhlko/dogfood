@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import s from "./styles.module.css";
 import { useDrop } from 'react-dnd';
 import { DnDTypes } from '../dnd-container';
+
+
 
 function DropTarget({ handleDrop, children }) {
     const [{ isHover }, dropRef] = useDrop({
