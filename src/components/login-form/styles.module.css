@@ -1,0 +1,10 @@
+.link {
+    cursor: pointer;
+    align-self: flex-end;
+
+}
+
+.formButton {
+    max-width: 356px;
+    width: 100%;
+}

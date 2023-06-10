@@ -1,0 +1,43 @@
+.form {
+    display: flex;
+    flex-direction: column;    
+    padding: 0 20px;
+}
+
+.title {
+    color: #000000;
+    margin:  24px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.left {
+    align-items: flex-start;
+}
+
+.center {
+    align-items: center;
+}
+
+.right {
+    align-items: flex-end;
+}
+/* input {
+    padding: 5px;
+    margin: 5px 0;
+    display: block;
+
+}
+
+button {
+    padding: 5px;
+    margin: 5px 0;
+} 
+
+form {
+    margin: 4px;
+}
+
+*/
+
