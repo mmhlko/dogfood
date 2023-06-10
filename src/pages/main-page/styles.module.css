@@ -1,0 +1,13 @@
+.mainPage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.banner_wrapper{
+    display: flex;
+    gap: 16px;
+
+
+}
