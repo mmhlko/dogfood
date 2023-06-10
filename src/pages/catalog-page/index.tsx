@@ -24,11 +24,12 @@ export const CatalogPage = () => {
 
         <div className="content container">
             <ContentHeader title="Каталог" textButton='Главная' to='/' />
-            <Sort tabs={TABS} />
-            <CardList goods={cards}/>
-            
-            
-            
+            <div className={s.pageContent}>
+                <Sort tabs={TABS} />
+                <CardList goods={cards}/>
+                <Carousel items={cards.slice(40, 50)} perView={4} component={Card} title={'Вы смотрели'}/>
+            </div>
+                     
         </div>
 
         

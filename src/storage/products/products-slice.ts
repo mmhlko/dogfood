@@ -1,15 +1,13 @@
 import {createSlice, createAsyncThunk, SerializedError} from '@reduxjs/toolkit';
 //import api from '../../utils/api'; payloadCreator => extra: api
 import { isLiked } from '../../utils/products';
-import { MAX_PRODUCT_PER_PAGE, TABS_ID } from '../../utils/constants';
+import { END_RANGE_PAGE, MAX_PRODUCT_PER_PAGE, RANGE_PAGINATION, START_RANGE_PAGE, TABS_ID } from '../../utils/constants';
 import { TProductResponseDto, TProductsResponseDto, TUserResponseDto } from '../../utils/api';
 import { TProduct, TUser } from '../../types';
 import { createAppAsyncThunk } from '../hook';
 import { TUserState } from '../user/user-slice';
 
-const startRangePage = 2
-const RANGE_PAGINATION = 3;
-const endRangePage = startRangePage + RANGE_PAGINATION - 1
+
 
 
 type TProductsState = {
@@ -40,8 +38,8 @@ const initialState: TProductsState = {
     currentPage: 1,
     totalPages: 1,
     productPerPage: MAX_PRODUCT_PER_PAGE,
-    currentStartPage: startRangePage,
-    currentEndPage: endRangePage,
+    currentStartPage: START_RANGE_PAGE,
+    currentEndPage: END_RANGE_PAGE,
 }
 
 export const sliceName = 'products'
@@ -109,8 +107,8 @@ const productsSlice = createSlice({
         onClickCurrentPage: (state, action) => {
             state.currentPage = action.payload
             if (state.currentPage === 1) {
-                state.currentStartPage = startRangePage;
-                state.currentEndPage = endRangePage
+                state.currentStartPage = START_RANGE_PAGE;
+                state.currentEndPage = END_RANGE_PAGE
             }
             if (state.currentPage === state.totalPages) {
                 state.currentStartPage = state.totalPages - RANGE_PAGINATION;

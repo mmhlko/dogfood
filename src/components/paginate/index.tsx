@@ -39,6 +39,9 @@ function Paginate({ onClickPrev, onClickNext, pages, currentPage, onClickPage, f
                     <a className={s.pageLink} href={`/catalog?page=${page}`} onClick={(e) => handleClickPage(e, page)}>{page}</a>
                 </li>
             ))}
+{/*                 <li className={classNames(s.paginateItem)}>
+                    <a className={s.pageLink} href='#' onClick={(e) => e.preventDefault()}>...</a>
+                </li> */}
             {pages.slice(pages.length - 1).map(page => (
                 <li className={classNames(s.paginateItem, {[s.activeItem]: currentPage === page})}>
                     <a className={s.pageLink} href={`/catalog?page=${page}`} onClick={(e) => handleClickPage(e, page)}>{page}</a>
