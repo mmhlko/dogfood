@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import ProfileForm from '../../components/profile-form';
 import ProfileInfo from '../../components/profile-info';
 import { useAppSelector } from '../../storage/hook';
@@ -10,8 +11,9 @@ function ProfilePage() {
     return ( 
         <>
             <div className='content container'>
-                <ProfileInfo />
-                <ProfileForm />
+{/*                 <ProfileInfo />
+                <ProfileForm /> */}
+                <Outlet /> {/* для вложенного роутинга */}
             </div>
         </>
      );

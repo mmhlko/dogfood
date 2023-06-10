@@ -8,13 +8,16 @@ import { useSelector } from "react-redux";
 import { useAppSelector } from "../../storage/hook";
 import Carousel from "../../components/carousel";
 import { Card } from "../../components/card";
+import { getProducts } from "../../storage/products/selector";
+
 
 
 
 export const CatalogPage = () => {
 
     
-    const cards = useAppSelector(state => state.products.data)
+    //упрощение const cards = useAppSelector(state => state.products.data)
+    const cards = useAppSelector(getProducts)
 
     return (
 
@@ -23,6 +26,7 @@ export const CatalogPage = () => {
             <ContentHeader title="Каталог" textButton='Главная' to='/' />
             <Sort tabs={TABS} />
             <CardList goods={cards}/>
+            
             
             
         </div>

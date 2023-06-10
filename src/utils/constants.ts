@@ -28,3 +28,6 @@ export const TABS = [
     },
 
 ]
+
+//pagination
+export const MAX_PRODUCT_PER_PAGE = 12;

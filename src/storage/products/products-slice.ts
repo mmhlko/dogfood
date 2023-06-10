@@ -1,11 +1,16 @@
 import {createSlice, createAsyncThunk, SerializedError} from '@reduxjs/toolkit';
 //import api from '../../utils/api'; payloadCreator => extra: api
 import { isLiked } from '../../utils/products';
-import { TABS_ID } from '../../utils/constants';
+import { MAX_PRODUCT_PER_PAGE, TABS_ID } from '../../utils/constants';
 import { TProductResponseDto, TProductsResponseDto, TUserResponseDto } from '../../utils/api';
 import { TProduct, TUser } from '../../types';
 import { createAppAsyncThunk } from '../hook';
 import { TUserState } from '../user/user-slice';
+
+const startRangePage = 2
+const RANGE_PAGINATION = 3;
+const endRangePage = startRangePage + RANGE_PAGINATION - 1
+
 
 type TProductsState = {
     data: TProductResponseDto[],
@@ -15,6 +20,12 @@ type TProductsState = {
     total: number,
     loading: boolean,
     error: SerializedError | null | unknown,
+    //pagination
+    currentPage: number,
+    totalPages:number
+    productPerPage: number,
+    currentStartPage: number,
+    currentEndPage: number,
 }
 
 const initialState: TProductsState = {
@@ -24,7 +35,13 @@ const initialState: TProductsState = {
     favoriteProducts: [], //добавляем новое поле в стейт, т.к. в запросе currentUser уже придет (см. const { user } = await getState())
     total: 0,
     loading: false,
-    error: null
+    error: null,
+    //pagination
+    currentPage: 1,
+    totalPages: 1,
+    productPerPage: MAX_PRODUCT_PER_PAGE,
+    currentStartPage: startRangePage,
+    currentEndPage: endRangePage,
 }
 
 export const sliceName = 'products'
@@ -88,7 +105,37 @@ const productsSlice = createSlice({
                     state.currentSort = TABS_ID.DEFAULT;
                     break;
               }
+        },
+        onClickCurrentPage: (state, action) => {
+            state.currentPage = action.payload
+            if (state.currentPage === 1) {
+                state.currentStartPage = startRangePage;
+                state.currentEndPage = endRangePage
+            }
+            if (state.currentPage === state.totalPages) {
+                state.currentStartPage = state.totalPages - RANGE_PAGINATION;
+                state.currentEndPage =  state.currentStartPage + RANGE_PAGINATION - 1;
+            } 
+        },
+        onPaginatePrev: (state) => {
+            state.currentPage--;
+            if (state.currentPage <= state.totalPages - RANGE_PAGINATION && state.currentEndPage !== 1 + RANGE_PAGINATION) {
+                state.currentStartPage--;
+                state.currentEndPage--;
+            }          
+
+        },
+        onPaginateNext: (state) => {
+            state.currentPage++;           
+            
+            if (state.currentPage > RANGE_PAGINATION && state.currentEndPage < 23) {                             
+                state.currentStartPage++;
+                state.currentEndPage++;
+                
+            }
+            
         }
+
     },
     extraReducers: (builder) => {
         builder //как в switch-case:
@@ -102,6 +149,7 @@ const productsSlice = createSlice({
                 state.data = products; //то что приходит по запросу продуктов, массив с товарами                
                 state.defaultSort = state.data.slice();                
                 state.total = total;
+                state.totalPages = Math.ceil(state.total / state.productPerPage);
                 if (currentUser) state.favoriteProducts = products.filter(item => isLiked(item.likes, currentUser._id))
                 
                 state.loading = false;
@@ -132,7 +180,7 @@ const productsSlice = createSlice({
             })
     }
 })
-export const { sortedProducts } = productsSlice.actions
+export const { sortedProducts, onClickCurrentPage, onPaginateNext, onPaginatePrev } = productsSlice.actions
 export default productsSlice.reducer;
 
 

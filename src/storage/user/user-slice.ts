@@ -1,8 +1,9 @@
-import {createSlice, createAsyncThunk, SerializedError} from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk, SerializedError, isAction} from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { setLocalData } from '../../utils/local-storage';
 import { createAppAsyncThunk } from '../hook';
 import { TAuthResponseDto, TUserResponseDto, UserAuthBodyDto, UserBodyDto, UserRegisterBodyDto } from '../../utils/api';
+import { getActionName, isActionPending, isActionRejected } from '../../utils/redux';
 // import api from '../../utils/api'; payloadCreator => extra: api
 
 export type TUserState  = {
@@ -131,47 +132,20 @@ const userSlice = createSlice({
         builder //как в switch-case:
 
             //fetchRegisterUser
-
-            .addCase(fetchRegisterUser.pending, (state, action) => { //{type: 'user/fetchUser/pending', payload (какие-то данные {...}}
-                state.fetchRegisterUserRequest = true;
-                state.fetchRegisterUserError = null;
-            })
             .addCase(fetchRegisterUser.fulfilled, (state, action) => { //payload экшена формируется в payload-creator асинхр функции, а сам экшен в функции fetchProducts
                 state.data = action.payload; //то что приходит по запросу продуктов, массив с товарами
                 state.fetchRegisterUserRequest = false;
             })
-            .addCase(fetchRegisterUser.rejected, (state, action) => {
-                state.fetchRegisterUserError = action.payload;
-                state.fetchRegisterUserRequest = false;
-            })
 
             //fetchLoginUser
-
-            .addCase(fetchLoginUser.pending, (state, action) => { //{type: 'user/fetchUser/pending', payload (какие-то данные {...}}
-                state.fetchLoginUserRequest = true;
-                state.fetchLoginUserError = null;
-            })
             .addCase(fetchLoginUser.fulfilled, (state, action) => { //payload экшена формируется в payload-creator асинхр функции, а сам экшен в функции fetchProducts
                 state.data = action.payload; //то что приходит по запросу продуктов, массив с товарами
                 state.fetchLoginUserRequest = false;
             })
-            .addCase(fetchLoginUser.rejected, (state, action) => {
-                state.fetchLoginUserError = action.payload;
-                state.fetchLoginUserRequest = false;
-            })
 
             //fetchCheckToken
-
-            .addCase(fetchCheckToken.pending, (state, action) => { //{type: 'user/fetchUser/pending', payload (какие-то данные {...}}
-                state.fetchCheckTokenRequest = true;
-                state.fetchCheckTokenError = null;
-            })
             .addCase(fetchCheckToken.fulfilled, (state, action) => { //payload экшена формируется в payload-creator асинхр функции, а сам экшен в функции fetchProducts
                 state.data = action.payload; //то что приходит по запросу продуктов, массив с товарами
-                state.fetchCheckTokenRequest = false;
-            })
-            .addCase(fetchCheckToken.rejected, (state, action) => {
-                state.fetchCheckTokenError = action.payload;
                 state.fetchCheckTokenRequest = false;
             })
 
@@ -180,10 +154,24 @@ const userSlice = createSlice({
                 state.data = action.payload; //то что приходит по запросу продуктов, массив с товарами
                 state.fetchCheckTokenRequest = false;
             })
-            .addCase(fetchEditUserInfo.rejected, (state, action) => {
-                state.fetchCheckTokenError = action.payload;
-                state.fetchCheckTokenRequest = false;
+
+
+            //add matcher шаблон для редьюсеров, принимает на вход 1. ф-я => boolean, 2. сама функция меняющая стор
+            .addMatcher(isActionPending, (state, action) => {
+                //state[`${getActionName(action.type)}Request`]: true //так было бы без TS, TS ругается, тк в виде строки может придти что угодно, и может такого поля не быть
+                //обход TS
+                state = {...state, [`${getActionName(action.type)}Request`]: true}
+                state = {...state, [`${getActionName(action.type)}Error`]: null} //так было бы без TS, TS ругается, тк в виде строки может придти что угодно, и может такого поля не быть
+
             })
+            .addMatcher(isActionRejected, (state, action) => {
+                //state[`${getActionName(action.type)}Request`]: true //так было бы без TS, TS ругается, тк в виде строки может придти что угодно, и может такого поля не быть
+                //обход TS
+                state = {...state, [`${getActionName(action.type)}Request`]: false}
+                state = {...state, [`${getActionName(action.type)}Error`]: action.payload } //так было бы без TS, TS ругается, тк в виде строки может придти что угодно, и может такого поля не быть
+
+            })
+
     }
 })
 

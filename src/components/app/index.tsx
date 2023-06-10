@@ -41,6 +41,8 @@ import CartPage from '../../pages/cart-page';
 import { useAppDispatch, useAppSelector } from '../../storage/hook';
 import { SubmitHandler } from 'react-hook-form';
 import ProfilePage from '../../pages/profile-page';
+import ProfileInfo from '../profile-info';
+import ProfileForm from '../profile-form';
 
 
 export function App() {
@@ -205,6 +207,7 @@ const handleClickNavigateModal = (to: string) => {
               <Search handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} handleInputClear={handleInputClear} /* value={value} setValue={setValue} */ />
             </>
           }/>
+          <Route path='/profile' element={<><Logo href='/' /></>}/>
           <Route path='/login' element={<><Logo href='/' /></>}/>
           <Route path='/register' element={<><Logo href='/' /></>}/>
           <Route path='/reset-password' element={<><Logo href='/' /></>}/>
@@ -221,7 +224,11 @@ const handleClickNavigateModal = (to: string) => {
           {/* <Route path='/' element={<span>Главная</span>}/> */}
           <Route path='/' element={<MainPage/>} />
           <Route path='/catalog' element={<ProtectedRoute><CatalogPage/></ProtectedRoute>} />
-          <Route path='/profile' element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
+          <Route path='/profile' element={
+            <ProtectedRoute><ProfilePage/></ProtectedRoute>}>
+              <Route index element={<ProfileInfo/>}/>
+              <Route path='edit' element={<ProfileForm/>}/>          
+          </Route>
           <Route path='/favorites' element={<ProtectedRoute><FavoritePage /></ProtectedRoute>} />
           <Route path='/faq' element={<FaqPage />}/>
           <Route path='/product/:productId' element={<ProtectedRoute><ProductPage /></ProtectedRoute>}/> {/* :productID это переменная, значение задается в компоненте card <Link to={`/product/${_id}`} className="card__link">*/}
