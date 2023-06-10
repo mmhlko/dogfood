@@ -1,0 +1,9 @@
+.pageContent {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.pageContent:last-child {
+    margin-bottom: 40px;
+}

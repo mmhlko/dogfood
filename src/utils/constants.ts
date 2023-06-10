@@ -31,3 +31,6 @@ export const TABS = [
 
 //pagination
 export const MAX_PRODUCT_PER_PAGE = 12;
+export const START_RANGE_PAGE = 2
+export const RANGE_PAGINATION = 3;
+export const END_RANGE_PAGE = START_RANGE_PAGE + RANGE_PAGINATION - 1;
